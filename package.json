@@ -1,0 +1,19 @@
+{
+	"name": "nodejs_socket_io",
+	"version": "1.0.0",
+	"description": "",
+	"main": "app.js",
+	"scripts": {
+		"start": "nodemon ./app.js -e hbs,js,css,html"
+	},
+	"author": "jungtin",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.17.1",
+		"express-handlebars": "^5.2.0",
+		"form-validator": "0.0.11",
+		"omit-empty": "^1.0.0",
+		"reload": "^3.1.1",
+		"socket.io": "^3.0.5"
+	}
+}

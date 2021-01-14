@@ -1,0 +1,32 @@
+<section id="home__section">
+    <div class="row">
+        <div class="col-12 col-md-8 mx-auto"
+             id="home__container">
+            <h1 class="h1 mb-4">Chào mừng bạn đã đến với JungTin Calling</h1>
+            <form action="{{URL.CHAT}}"
+                  method="POST"
+                  class="home__form">
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text"
+                           name="username"
+                           class="form-control">
+                    <div class="form-text text-white">*Choose username for display in chat.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Chat Room</label>
+                    <select class="form-select"
+                            name="room">
+                        {{#each rooms as |room|}}
+                        <option value="{{room.id}}">{{room.name}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-success">Submit</button>
+            </form>
+        </div>
+    </div>
+</section>

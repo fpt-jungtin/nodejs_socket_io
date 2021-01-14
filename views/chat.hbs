@@ -1,0 +1,100 @@
+<section id="chat"
+         class="container">
+    <div class="row"
+         id="chat__row">
+        <div id="chat__description-container">
+            <h1>Room</h1>
+            <div id="chat__description-info-box">
+                <span class="mb-2"><span class="chat__label-title">Room's name</span> : {{room.name}}</span>
+                <span><span class="chat__label-title">Your username</span> : {{username}}</span>
+            </div>
+        </div>
+
+        <div class="row justify-content-between">
+            <div class="col-3">
+                <h1>Online Users</h1>
+                <ul>
+                    <li></li>
+                </ul>
+            </div>
+            <div class="col-5">
+                <div id="chat__container">
+                    <div id="chat__message-container">
+                        <ul>
+                        </ul>
+                    </div>
+                    <form id="chat__form">
+                        <div id="chat__input-container">
+                            <textarea type="text"
+                                      id="chat__input"
+                                      placeholder="ctrl + enter để gửi"></textarea>
+                            <button class="btn btn-secondary align-self-center"
+                                    type="submit">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const roomId = "{{room.id}}";
+    const username = "{{username}}";
+
+
+    const chatContainerEl = document.querySelector("#chat__message-container");
+    const chatListEl = document.querySelector("#chat__message-container ul");
+    const form = document.querySelector("form#chat__form");
+
+    const handleSubmitForm = (event) => {
+        event.preventDefault();
+
+        socket.emit("message", {
+            roomId,
+            message: chatInput.value
+        });
+        chatInput.value = ""; // reset
+    }
+
+    /* DOM Elements */
+    const chatInput = document.querySelector("#chat__input");
+    chatInput.addEventListener("keyup", event => {
+        if (event.ctrlKey && event.keyCode === 13)
+            handleSubmitForm(event);
+        else if (event.ctrlKey && event.keyCode === 89)
+            event.target.value = "";
+    });
+
+
+    form.addEventListener("submit", handleSubmitForm)
+
+
+    socket.on("connect", () => {
+        socket.emit("join-room", { username, roomId }); // bắt đầu join room
+    });
+
+    socket.on("message", ({ sender, message }) => {
+        // if(sender.id === socket.id)
+        // <li><span class="chat__item-name self">User 1</span> : Xin chào tất cả mọi người nhé</li> 
+
+        const nameSpan = document.createElement("span");
+        nameSpan.classList.add("chat__item-name");
+        if (sender.id === socket.id)
+            nameSpan.classList.add("self");
+
+        nameSpan.innerText = sender.username;
+
+
+        const liEl = document.createElement("li");
+        liEl.innerText = ` : ${message}`;
+        liEl.prepend(nameSpan);
+
+        chatListEl.appendChild(liEl);
+
+        if (sender.id === socket.id)
+            chatContainerEl.scrollTop = chatContainerEl.scrollHeight;
+    })
+</script>
