@@ -122,3 +122,13 @@ div#chat__container ul li {
 	height: 64px;
 	padding: 10px;
 }
+
+/* Online Users */
+#chat__user-list {
+	list-style-type: disc;
+	padding-left: 1rem !important;
+}
+
+#chat__user-list li {
+	line-height: 1.5rem;
+}

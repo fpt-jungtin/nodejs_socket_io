@@ -66,14 +66,21 @@ const users = new Set();
 
 io.on("connection", (socket) => {
 	socket.on("join-room", ({ username, roomId }) => {
-		users.add({
+		const user = {
 			id: socket.id,
 			username,
-		});
+		};
+
+		users.add(user);
 		socket.join(roomId);
 
 		// notify
 		console.log(`Đã đăng nhập ${username} vào Room : ${roomId}`);
+
+		const arrUsers = Array.from(getClients(roomId)).map((clientId) => {
+			return getUser(clientId);
+		});
+		io.to(roomId).emit("users-change", arrUsers);
 		socket.emit("message", {
 			sender: {
 				id: null,
@@ -96,6 +103,20 @@ io.on("connection", (socket) => {
 			sender: user,
 			message,
 		});
+	});
+
+	socket.on("disconnecting", (reason) => {
+		for (const roomId of socket.rooms) {
+			if (roomId !== socket.id) {
+				const arrUsers = Array.from(getClients(roomId))
+					.map((clientId) => {
+						return getUser(clientId);
+					})
+					.filter((u) => u.id !== socket.id);
+				console.log(arrUsers);
+				socket.to(roomId).emit("users-change", arrUsers);
+			}
+		}
 	});
 });
 

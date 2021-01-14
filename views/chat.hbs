@@ -11,13 +11,12 @@
         </div>
 
         <div class="row justify-content-between">
-            <div class="col-3">
-                <h1>Online Users</h1>
-                <ul>
-                    <li></li>
+            <div class="col-8 col-lg-2 mx-auto mt-4 border border-3 p-3">
+                <h3>Online Users</h3>
+                <ul id="chat__user-list">
                 </ul>
             </div>
-            <div class="col-5">
+            <div class="col-8 col-lg-5 mx-auto">
                 <div id="chat__container">
                     <div id="chat__message-container">
                         <ul>
@@ -76,6 +75,20 @@
         socket.emit("join-room", { username, roomId }); // bắt đầu join room
     });
 
+    socket.on("users-change", users => {
+        const userListEl = document.querySelector("#chat__user-list");
+        userListEl.innerHTML = "";
+
+        users.forEach(u => {
+            const liEl = document.createElement("li");
+            liEl.classList.add("chat__user-list-item");
+            liEl.setAttribute("data-id", u.id);
+            liEl.innerText = `${u.username}`;
+            userListEl.append(liEl);
+        })
+    })
+
+
     socket.on("message", ({ sender, message }) => {
         // if(sender.id === socket.id)
         // <li><span class="chat__item-name self">User 1</span> : Xin chào tất cả mọi người nhé</li> 
@@ -97,4 +110,7 @@
         if (sender.id === socket.id)
             chatContainerEl.scrollTop = chatContainerEl.scrollHeight;
     })
+
+
+
 </script>
